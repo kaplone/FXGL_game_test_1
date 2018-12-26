@@ -16,10 +16,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
+import models.Labyrinthe;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static app.EnumDirection.*;
 
@@ -27,9 +26,7 @@ public class Main extends GameApplication {
 
     private Entity player;
     private List<Entity> pommes;
-    private List<Entity> murs;
     private Entity pomme;
-    private Entity mur;
     private GameSettings settings;
     private Integer sizeX = 600;
     private Integer sizeY = 600;
@@ -101,21 +98,23 @@ public class Main extends GameApplication {
                 .buildAndAttach(getGameWorld());
         pommes.add(pomme);
 
-        murs = new ArrayList<>();
-        mur = Entities.builder()
-                .type(EntityType.MUR)
-                .at(40, 50)
-                .viewFromNodeWithBBox(new Rectangle(10, 225, Color.BLACK))
-                .with(new CollidableComponent(true), new PhysicsComponent())
-                .buildAndAttach(getGameWorld());
-        murs.add(mur);
-        mur = Entities.builder()
-                .type(EntityType.MUR)
-                .at(40, 325)
-                .viewFromNodeWithBBox(new Rectangle(10, 225, Color.BLACK))
-                .with(new CollidableComponent(true), new PhysicsComponent())
-                .buildAndAttach(getGameWorld());
-        murs.add(mur);
+        String s =
+
+                "__________" + "\n"
+                        + "  |  | |  |" + "\n"
+                        + "  __    _ " + "\n"
+                        + "||  ||| | |" + "\n"
+                        + " __   __  " + "\n"
+                        + "||  | |  ||" + "\n"
+                        + "_ ____ ___" + "\n"
+                        + "| ||  | | |" + "\n"
+                        + "  __    _ " + "\n"
+                        + "  |  | |  |" + "\n"
+                        + "  __    _ " + "\n"
+                        + "  |  | |  |" + "\n"
+                        + "  __    _ " + "\n";
+
+        Labyrinthe.getMurs(s, getGameWorld());
     }
 
     @Override
@@ -138,13 +137,14 @@ public class Main extends GameApplication {
 
         input.addAction(new UserAction("Move Right") {
             @Override
-            protected  void onActionBegin(){
-                player.setProperty("prevDirection", player.getObject("nextDirection"));
+            protected void onActionBegin() {
+
+                System.out.println("Action begin");
             }
 
             @Override
             protected void onAction() {
-                player.setProperty("nextDirection", RIGHT);
+
                 if (player.getProperties().getBoolean("canMoveRight")) {
                     // si l'objet sort par la droite il rentre par la gauche
                     if (getGameState().getInt("pixelsMovedX") >= maxRight) {
@@ -156,26 +156,19 @@ public class Main extends GameApplication {
                         player.translateX(vitesse); // move right 5 pixels
                         getGameState().increment("pixelsMovedX", vitesse);
                     }
-                } else {
-                    player.setProperty("canMoveLeft", true);
-                    player.setProperty("canMoveUp", true);
-                    player.setProperty("canMoveDown", true);
-                    if ("normal".equals(player.getString("Etat"))) {
-                        player.setProperty("canMoveRight", true);
-                    }
                 }
             }
         }, KeyCode.RIGHT);
 
         input.addAction(new UserAction("Move Left") {
             @Override
-            protected  void onActionBegin(){
-                player.setProperty("prevDirection", player.getObject("nextDirection"));
+            protected void onActionBegin() {
+                System.out.println("Action begin");
             }
 
             @Override
             protected void onAction() {
-                player.setProperty("nextDirection", LEFT);
+
                 if (player.getProperties().getBoolean("canMoveLeft")) {
                     // si l'objet sort par la gauche il rentre par a droite
                     //System.out.println(getGameState().getInt("pixelsMovedX") + " : " +  maxLeft);
@@ -188,26 +181,19 @@ public class Main extends GameApplication {
                         player.translateX(-vitesse); // move right 5 pixels
                         getGameState().increment("pixelsMovedX", -vitesse);
                     }
-                } else {
-                    player.setProperty("canMoveRight", true);
-                    player.setProperty("canMoveUp", true);
-                    player.setProperty("canMoveDown", true);
-                    if ("normal".equals(player.getString("Etat"))) {
-                        player.setProperty("canMoveLeft", true);
-                    }
                 }
             }
         }, KeyCode.LEFT);
 
         input.addAction(new UserAction("Move Up") {
             @Override
-            protected  void onActionBegin(){
-                player.setProperty("prevDirection", player.getObject("nextDirection"));
+            protected void onActionBegin() {
+                System.out.println("Action begin");
             }
 
             @Override
             protected void onAction() {
-                player.setProperty("nextDirection", UP);
+
                 if (player.getProperties().getBoolean("canMoveUp")) {
                     // si l'objet sort par le haut il rentre par le bas
                     // System.out.println(getGameState().getInt("pixelsMovedY") + " : " +  maxTop);
@@ -220,26 +206,19 @@ public class Main extends GameApplication {
                         player.translateY(-vitesse); // move right 5 pixels
                         getGameState().increment("pixelsMovedY", -vitesse);
                     }
-                } else {
-                    player.setProperty("canMoveRight", true);
-                    player.setProperty("canMoveLeft", true);
-                    player.setProperty("canMoveDown", true);
-                    if ("normal".equals(player.getString("Etat"))) {
-                        player.setProperty("canMoveUp", true);
-                    }
                 }
             }
         }, KeyCode.UP);
 
         input.addAction(new UserAction("Move Down") {
             @Override
-            protected  void onActionBegin(){
-                player.setProperty("prevDirection", player.getObject("nextDirection"));
+            protected void onActionBegin() {
+                System.out.println("Action begin");
             }
 
             @Override
             protected void onAction() {
-                player.setProperty("nextDirection", DOWN);
+
                 if (player.getProperties().getBoolean("canMoveDown")) {
                     //System.out.println(getGameState().getInt("pixelsMovedY") + " : " +  maxBottom);
                     if (getGameState().getInt("pixelsMovedY") >= maxBottom) {
@@ -250,13 +229,6 @@ public class Main extends GameApplication {
                     } else {
                         player.translateY(vitesse); // move right 5 pixels
                         getGameState().increment("pixelsMovedY", vitesse);
-                    }
-                } else {
-                    player.setProperty("canMoveRight", true);
-                    player.setProperty("canMoveLeft", true);
-                    player.setProperty("canMoveUp", true);
-                    if ("normal".equals(player.getString("Etat"))) {
-                        player.setProperty("canMoveDown", true);
                     }
                 }
             }
@@ -283,74 +255,102 @@ public class Main extends GameApplication {
                 System.out.println("Begin");
             }
 
-            @Override
-            protected void onHitBoxTrigger(Entity joueur, Entity mur, HitBox hitBoxJoueur, HitBox hitBoxMur) {
-                System.out.println("Trigger");
-                player.setProperty("Etat", "preEnd");
+            private void goSwitch(Entity joueur, Entity mur, HitBox hitBoxJoueur, HitBox hitBoxMur) {
+                int total = 0;
 
-                if ((RIGHT.equals(player.getObject("nextDirection")) || RIGHT.equals(player.getObject("prevDirection")))
-                        && hitBoxJoueur.getMaxXWorld() >= hitBoxMur.getMinXWorld()
-                        && !(hitBoxJoueur.getMinYWorld() >= hitBoxMur.getMaxYWorld()
-                        || hitBoxJoueur.getMaxYWorld() <= hitBoxMur.getMinYWorld())) {
+                if (hitBoxJoueur.getMaxXWorld() == hitBoxMur.getMinXWorld()
+                        && hitBoxJoueur.getMaxYWorld() > hitBoxMur.getMinYWorld()
+                        && hitBoxJoueur.getMinYWorld() < hitBoxMur.getMaxYWorld()){
+                    total++;
                     System.out.println("contact coté droit");
                     player.setProperty("canMoveRight", false);
                 }
-                if ((LEFT.equals(player.getObject("nextDirection")) || LEFT.equals(player.getObject("prevDirection")))
-                        && hitBoxJoueur.getMinXWorld() <= hitBoxMur.getMaxXWorld()
-                        && !(hitBoxJoueur.getMinYWorld() >= hitBoxMur.getMaxYWorld()
-                        || hitBoxJoueur.getMaxYWorld() <= hitBoxMur.getMinYWorld())) {
+
+                if (hitBoxJoueur.getMinXWorld() == hitBoxMur.getMaxXWorld()
+                        && hitBoxJoueur.getMaxYWorld() > hitBoxMur.getMinYWorld()
+                        && hitBoxJoueur.getMinYWorld() < hitBoxMur.getMaxYWorld()){
+                    total++;
                     System.out.println("contact coté gauche");
                     player.setProperty("canMoveLeft", false);
                 }
-                if ((UP.equals(player.getObject("nextDirection")) || UP.equals(player.getObject("prevDirection")))
-                        && hitBoxJoueur.getMinYWorld() >= hitBoxMur.getMaxYWorld()
-                        && !(hitBoxJoueur.getMinXWorld() >= hitBoxMur.getMaxXWorld()
-                        || hitBoxJoueur.getMaxXWorld() <= hitBoxMur.getMinXWorld())) {
+
+                if (hitBoxJoueur.getMinYWorld() == hitBoxMur.getMaxYWorld()
+                        && hitBoxJoueur.getMaxXWorld() > hitBoxMur.getMinXWorld()
+                        && hitBoxJoueur.getMinXWorld() < hitBoxMur.getMaxXWorld()){
+                    total ++;
                     System.out.println("contact coté haut");
                     player.setProperty("canMoveUp", false);
                 }
-                if ((DOWN.equals(player.getObject("nextDirection")) || DOWN.equals(player.getObject("prevDirection")))
-                        && hitBoxJoueur.getMaxYWorld() <= hitBoxMur.getMinYWorld()
-                        && !(hitBoxJoueur.getMinXWorld() >= hitBoxMur.getMaxXWorld()
-                        || hitBoxJoueur.getMaxXWorld() <= hitBoxMur.getMinXWorld())) {
+
+                if (hitBoxJoueur.getMaxYWorld() == hitBoxMur.getMinYWorld()
+                        && hitBoxJoueur.getMaxXWorld() > hitBoxMur.getMinXWorld()
+                        && hitBoxJoueur.getMinXWorld() < hitBoxMur.getMaxXWorld()){
+                    total ++;
                     System.out.println("contact coté bas");
                     player.setProperty("canMoveDown", false);
+                };
+                System.out.println("Total des contacts = " + total);
+
+                if (total == 1){
+                    addMurs(mur, hitBoxMur);
                 }
+                else {
+                    addMurToRemove(mur);
+                    System.out.println("Remove " + mur);
+                }
+
+
+            }
+
+            @Override
+            protected void onHitBoxTrigger(Entity joueur, Entity mur, HitBox hitBoxJoueur, HitBox hitBoxMur) {
+                setHitBoxJoueur(hitBoxJoueur);
+                addMurs(mur, hitBoxMur);
+                gererLesMurs(joueur, true);
             }
 
             @Override
             protected void onCollision(Entity joueur, Entity mur) {
-                player.setProperty("Etat", "preEnd");
-                //onCollisionPostEnd(player, mur);
+
             }
 
             @Override
             protected void onCollisionEnd(Entity joueur, Entity mur) {
                 System.out.println("End");
-                if (!"preEnd".equals(player.getString("Etat"))) {
-                    onCollisionPostEnd(player, mur);
-                } else {
-                    player.setProperty("Etat", "normal");
-                }
-
+                gererLesMurs(joueur, false);
             }
 
-            protected void onCollisionPreEnd(Entity joueur, Entity mur) {
+            private void gererLesMurs(Entity joueur, boolean enchainerAvecEnd){
 
-            }
-
-            protected void onCollisionPostEnd(Entity joueur, Entity mur) {
                 player.setProperty("canMoveRight", true);
                 player.setProperty("canMoveLeft", true);
                 player.setProperty("canMoveUp", true);
                 player.setProperty("canMoveDown", true);
+
+                clearMursToRemove();
+                System.out.print("Gerer les murs ... ");
+                System.out.print(getMurs());
+                System.out.println(" Size : " + getMurs().size());
+                for (Map.Entry<Entity, HitBox> m : getMurs().entrySet()){
+                    goSwitch(joueur, m.getKey(), getHitBoxJoueur(), m.getValue());
+                }
+                removeAllMurs(getMursToRemove());
+
+                if (enchainerAvecEnd){
+                    for (Entity e : getMursToRemove()){
+                        onCollisionEnd(joueur, e);
+                    }
+                }
             }
+
         });
     }
 
+
+
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put("pixelsMovedX", sizeY / 2);
+        vars.put("pixelsMovedX", sizeX / 2 + 20);
         vars.put("pixelsMovedY", sizeY / 2);
     }
 
@@ -360,18 +360,5 @@ public class Main extends GameApplication {
         for (int i = 0; i < couleurs.length; i++) {
 
         }
-
-        /*Text textPixelsX = new Text();
-        Text textPixelsY = new Text();
-        textPixelsX.setTranslateX(50); // x = 50
-        textPixelsY.setTranslateX(90); // x = 50
-        textPixelsX.setTranslateY(100); // y = 100
-        textPixelsY.setTranslateY(100); // y = 100
-        textPixelsX.textProperty().bind(getGameState().intProperty("pixelsMovedX").asString());
-        textPixelsY.textProperty().bind(getGameState().intProperty("pixelsMovedY").asString());
-
-        getGameScene().addUINode(textPixelsX); // add to the scene graph
-        getGameScene().addUINode(textPixelsY); // add to the scene graph*/
-
     }
 }
