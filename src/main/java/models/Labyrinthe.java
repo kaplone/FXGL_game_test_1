@@ -41,23 +41,25 @@ public class Labyrinthe {
         murs = new ArrayList<>();
         mursHit = new HashMap<>();
         String[] lignes = codes.split("\n");
-        int x = 10;
-        int y = 50;
+        int x;
+        int y;
         int posX = 50;
         int posY = 50;
-        int deltaY = 10;
+        int deltaY;
         for (int i = 0; i < lignes.length; i++){
+            //System.out.println(i + " : " + lignes[i]);
             String[] elements = lignes[i].split("");
             if (i % 2 == 0){
                 x = 60;
                 y = 10;
                 deltaY = 0;
                 for (int j = 0; j < elements.length; j++){
+                    //System.out.println("*" + elements[j] + "*");
                     if ("_".equals(elements[j])){
                         Entity mur = Entities.builder()
                                 .type(EntityType.MUR)
                                 .at(posX, posY)
-                                .viewFromNodeWithBBox(new Rectangle(x, y, Color.rgb(i * j * 23 % 255, i * j * 81 % 255,i * j * 186 % 255)))
+                                .viewFromNodeWithBBox(new Rectangle(x, y, Color.BLACK))
                                 .with(new CollidableComponent(true), new PhysicsComponent())
                                 .buildAndAttach(gameWorld);
 
@@ -78,7 +80,7 @@ public class Labyrinthe {
                         Entity mur = Entities.builder()
                                 .type(EntityType.MUR)
                                 .at(posX, posY)
-                                .viewFromNodeWithBBox(new Rectangle(x, y, Color.rgb(i * j * 223 % 255, i * j * 131 % 255,i * j * 16 % 255)))
+                                .viewFromNodeWithBBox(new Rectangle(x, y, Color.BLACK))
                                 .with(new CollidableComponent(true), new PhysicsComponent())
                                 .buildAndAttach(gameWorld);
                         murs.add(mur);

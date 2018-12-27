@@ -47,7 +47,7 @@ public class Main extends GameApplication {
         settings.setHeight(sizeY);
         settings.setTitle("Basic Game App");
         settings.setVersion("0.1");
-        settings.setProfilingEnabled(true);
+        //settings.setProfilingEnabled(true);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class Main extends GameApplication {
 
         player = Entities.builder()
                 .type(EntityType.JOUEUR)
-                .at(sizeX / 2, sizeY / 2)
+                .at(20, 20)
                 .viewFromNodeWithBBox(new Rectangle(sizePlayerX, sizePlayerY, Color.BLUE))
                 .with(new CollidableComponent(true))
                 .buildAndAttach(getGameWorld());
@@ -73,28 +73,28 @@ public class Main extends GameApplication {
 
         pomme = Entities.builder()
                 .type(EntityType.POMME)
-                .at(sizeX / 4, sizeY / 4)
+                .at(70, 160)
                 .viewFromNodeWithBBox(new Circle(10, Color.LIMEGREEN))
                 .with(new CollidableComponent(true), new PhysicsComponent())
                 .buildAndAttach(getGameWorld());
         pommes.add(pomme);
         pomme = Entities.builder()
                 .type(EntityType.POMME)
-                .at(3 * (sizeX / 4), sizeY / 4)
+                .at(520, 70)
                 .viewFromNodeWithBBox(new Circle(10, Color.GREEN))
                 .with(new CollidableComponent(true), new PhysicsComponent())
                 .buildAndAttach(getGameWorld());
         pommes.add(pomme);
         pomme = Entities.builder()
                 .type(EntityType.POMME)
-                .at(3 * (sizeX / 4), 3 * (sizeY / 4))
+                .at(70, 520)
                 .viewFromNodeWithBBox(new Circle(10, Color.LIME))
                 .with(new CollidableComponent(true), new PhysicsComponent())
                 .buildAndAttach(getGameWorld());
         pommes.add(pomme);
         pomme = Entities.builder()
                 .type(EntityType.POMME)
-                .at(sizeX / 4, 3 * (sizeY / 4))
+                .at(460, 520)
                 .viewFromNodeWithBBox(new Circle(10, Color.ORANGE))
                 .with(new CollidableComponent(true), new PhysicsComponent())
                 .buildAndAttach(getGameWorld());
@@ -102,7 +102,7 @@ public class Main extends GameApplication {
 
         String s =
 
-                "__________" + "\n"
+                          "__________" + "\n"
                         + "  |  | |  |" + "\n"
                         + "  __    _ " + "\n"
                         + "||  ||| | |" + "\n"
@@ -110,11 +110,19 @@ public class Main extends GameApplication {
                         + "||  | |  ||" + "\n"
                         + "_ ____ ___" + "\n"
                         + "| ||  | | |" + "\n"
-                        + "  __    _ " + "\n"
-                        + "  |  | |  |" + "\n"
-                        + "  __    _ " + "\n"
-                        + "  |  | |  |" + "\n"
-                        + "  __    _ " + "\n";
+                        + " _  _ _   " + "\n"
+                        + "|  | | | ||" + "\n"
+                        + "_ __ _  _ " + "\n"
+                        + "| | || || |" + "\n"
+                        + " _    _  _" + "\n"
+                        + "|  | |  | |" + "\n"
+                        + " ___ _ __ " + "\n"
+                        + "|  |  ||  |" + "\n"
+                        + "_ ___ _  _" + "\n"
+                        + "| | | | | |" + "\n"
+                        + " _   _ __ " + "\n"
+                        + "|  |  |  ||" + "\n"
+                        + "_________" + "\n";
 
         murs = Labyrinthe.getMurs(s, getGameWorld());
     }
@@ -131,9 +139,9 @@ public class Main extends GameApplication {
         input.addAction(new UserAction("Clic") {
             @Override
             protected void onAction() {
-                player.setPosition(sizeX / 2, sizeY / 2);
-                getGameState().setValue("pixelsMovedX", sizeX / 2);
-                getGameState().setValue("pixelsMovedY", sizeY / 2);
+                player.setPosition(20, 20);
+                getGameState().setValue("pixelsMovedX", 20);
+                getGameState().setValue("pixelsMovedY", 20);
             }
         }, MouseButton.PRIMARY);
 
@@ -276,8 +284,8 @@ public class Main extends GameApplication {
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put("pixelsMovedX", sizeX / 2 + 20);
-        vars.put("pixelsMovedY", sizeY / 2);
+        vars.put("pixelsMovedX", 20);
+        vars.put("pixelsMovedY", 20);
     }
 
     @Override
@@ -296,7 +304,7 @@ public class Main extends GameApplication {
                 && hitBoxJoueur.getMaxYWorld() > hitBoxMur.getMinYWorld()
                 && hitBoxJoueur.getMinYWorld() < hitBoxMur.getMaxYWorld()) {
             total++;
-            System.out.println("contact coté droit");
+            //System.out.println("contact coté droit");
             r = false;
         }
 
@@ -304,7 +312,7 @@ public class Main extends GameApplication {
                 && hitBoxJoueur.getMaxYWorld() > hitBoxMur.getMinYWorld()
                 && hitBoxJoueur.getMinYWorld() < hitBoxMur.getMaxYWorld()) {
             total++;
-            System.out.println("contact coté gauche");
+            //System.out.println("contact coté gauche");
             l = false;
         }
 
@@ -312,7 +320,7 @@ public class Main extends GameApplication {
                 && hitBoxJoueur.getMaxXWorld() > hitBoxMur.getMinXWorld()
                 && hitBoxJoueur.getMinXWorld() < hitBoxMur.getMaxXWorld()) {
             total++;
-            System.out.println("contact coté haut");
+            //System.out.println("contact coté haut");
             u = false;
         }
 
@@ -320,7 +328,7 @@ public class Main extends GameApplication {
                 && hitBoxJoueur.getMaxXWorld() > hitBoxMur.getMinXWorld()
                 && hitBoxJoueur.getMinXWorld() < hitBoxMur.getMaxXWorld()) {
             total++;
-            System.out.println("contact coté bas");
+            //System.out.println("contact coté bas");
             d = false;
         }
         ;
@@ -347,8 +355,9 @@ public class Main extends GameApplication {
         player.setProperty("canMoveUp", true);
         player.setProperty("canMoveDown", true);
 
-        for (Map.Entry<Entity, Mur> m : Labyrinthe.getMursHit().entrySet()) {
-            gererLesContacts(player, m.getKey(), player.getBoundingBoxComponent().hitBoxesProperty().get(0), m.getValue().getHitBox());
-        }
+        Labyrinthe.getMursHit().entrySet().parallelStream()
+                                          .filter(k -> Math.abs(player.getX() - k.getKey().getX()) < 100
+                                                    && Math.abs(player.getY() - k.getKey().getY()) < 100)
+                                          .forEach(m -> gererLesContacts(player, m.getKey(), player.getBoundingBoxComponent().hitBoxesProperty().get(0), m.getValue().getHitBox()));
     }
 }
