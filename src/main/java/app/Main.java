@@ -17,6 +17,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
 import models.Labyrinthe;
+import models.Mur;
 
 import java.util.*;
 
@@ -25,6 +26,7 @@ import static app.EnumDirection.*;
 public class Main extends GameApplication {
 
     private Entity player;
+    private List<Entity> murs;
     private List<Entity> pommes;
     private Entity pomme;
     private GameSettings settings;
@@ -114,7 +116,7 @@ public class Main extends GameApplication {
                         + "  |  | |  |" + "\n"
                         + "  __    _ " + "\n";
 
-        Labyrinthe.getMurs(s, getGameWorld());
+        murs = Labyrinthe.getMurs(s, getGameWorld());
     }
 
     @Override
@@ -139,7 +141,7 @@ public class Main extends GameApplication {
             @Override
             protected void onActionBegin() {
 
-                System.out.println("Action begin");
+                //System.out.println("Action begin");
             }
 
             @Override
@@ -163,7 +165,7 @@ public class Main extends GameApplication {
         input.addAction(new UserAction("Move Left") {
             @Override
             protected void onActionBegin() {
-                System.out.println("Action begin");
+                //System.out.println("Action begin");
             }
 
             @Override
@@ -188,7 +190,7 @@ public class Main extends GameApplication {
         input.addAction(new UserAction("Move Up") {
             @Override
             protected void onActionBegin() {
-                System.out.println("Action begin");
+                //System.out.println("Action begin");
             }
 
             @Override
@@ -213,7 +215,7 @@ public class Main extends GameApplication {
         input.addAction(new UserAction("Move Down") {
             @Override
             protected void onActionBegin() {
-                System.out.println("Action begin");
+                //System.out.println("Action begin");
             }
 
             @Override
@@ -242,71 +244,22 @@ public class Main extends GameApplication {
             // order of types is the same as passed into the constructor
             @Override
             protected void onCollisionBegin(Entity joueur, Entity pomme) {
-                System.out.println(pomme);
+                //System.out.println(pomme);
                 pomme.removeFromWorld();
                 ((Rectangle) player.getView().getNodes().get(0)).setFill(((Circle) pomme.getView().getNodes().get(0)).getFill());
             }
         });
-        getPhysicsWorld().addCollisionHandler(new JoueurCollisionHandler(EntityType.JOUEUR, EntityType.MUR) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.JOUEUR, EntityType.MUR) {
 
             // order of types is the same as passed into the constructor
             @Override
             protected void onCollisionBegin(Entity joueur, Entity mur) {
-                System.out.println("Begin");
+                //System.out.println("Begin");
             }
 
-            private void goSwitch(Entity joueur, Entity mur, HitBox hitBoxJoueur, HitBox hitBoxMur) {
-                int total = 0;
-
-                if (hitBoxJoueur.getMaxXWorld() == hitBoxMur.getMinXWorld()
-                        && hitBoxJoueur.getMaxYWorld() > hitBoxMur.getMinYWorld()
-                        && hitBoxJoueur.getMinYWorld() < hitBoxMur.getMaxYWorld()){
-                    total++;
-                    System.out.println("contact coté droit");
-                    player.setProperty("canMoveRight", false);
-                }
-
-                if (hitBoxJoueur.getMinXWorld() == hitBoxMur.getMaxXWorld()
-                        && hitBoxJoueur.getMaxYWorld() > hitBoxMur.getMinYWorld()
-                        && hitBoxJoueur.getMinYWorld() < hitBoxMur.getMaxYWorld()){
-                    total++;
-                    System.out.println("contact coté gauche");
-                    player.setProperty("canMoveLeft", false);
-                }
-
-                if (hitBoxJoueur.getMinYWorld() == hitBoxMur.getMaxYWorld()
-                        && hitBoxJoueur.getMaxXWorld() > hitBoxMur.getMinXWorld()
-                        && hitBoxJoueur.getMinXWorld() < hitBoxMur.getMaxXWorld()){
-                    total ++;
-                    System.out.println("contact coté haut");
-                    player.setProperty("canMoveUp", false);
-                }
-
-                if (hitBoxJoueur.getMaxYWorld() == hitBoxMur.getMinYWorld()
-                        && hitBoxJoueur.getMaxXWorld() > hitBoxMur.getMinXWorld()
-                        && hitBoxJoueur.getMinXWorld() < hitBoxMur.getMaxXWorld()){
-                    total ++;
-                    System.out.println("contact coté bas");
-                    player.setProperty("canMoveDown", false);
-                };
-                System.out.println("Total des contacts = " + total);
-
-                if (total == 1){
-                    addMurs(mur, hitBoxMur);
-                }
-                else {
-                    addMurToRemove(mur);
-                    System.out.println("Remove " + mur);
-                }
-
-
-            }
 
             @Override
             protected void onHitBoxTrigger(Entity joueur, Entity mur, HitBox hitBoxJoueur, HitBox hitBoxMur) {
-                setHitBoxJoueur(hitBoxJoueur);
-                addMurs(mur, hitBoxMur);
-                gererLesMurs(joueur, true);
             }
 
             @Override
@@ -316,36 +269,9 @@ public class Main extends GameApplication {
 
             @Override
             protected void onCollisionEnd(Entity joueur, Entity mur) {
-                System.out.println("End");
-                gererLesMurs(joueur, false);
             }
-
-            private void gererLesMurs(Entity joueur, boolean enchainerAvecEnd){
-
-                player.setProperty("canMoveRight", true);
-                player.setProperty("canMoveLeft", true);
-                player.setProperty("canMoveUp", true);
-                player.setProperty("canMoveDown", true);
-
-                clearMursToRemove();
-                System.out.print("Gerer les murs ... ");
-                System.out.print(getMurs());
-                System.out.println(" Size : " + getMurs().size());
-                for (Map.Entry<Entity, HitBox> m : getMurs().entrySet()){
-                    goSwitch(joueur, m.getKey(), getHitBoxJoueur(), m.getValue());
-                }
-                removeAllMurs(getMursToRemove());
-
-                if (enchainerAvecEnd){
-                    for (Entity e : getMursToRemove()){
-                        onCollisionEnd(joueur, e);
-                    }
-                }
-            }
-
         });
     }
-
 
 
     @Override
@@ -356,9 +282,73 @@ public class Main extends GameApplication {
 
     @Override
     protected void initUI() {
-        EnumCouleur[] couleurs = EnumCouleur.values();
-        for (int i = 0; i < couleurs.length; i++) {
+    }
 
+    protected void gererLesContacts(Entity player, Entity mur, HitBox hitBoxJoueur, HitBox hitBoxMur) {
+
+        int total = 0;
+        Boolean r = true;
+        Boolean l = true;
+        Boolean u = true;
+        Boolean d = true;
+
+        if (hitBoxJoueur.getMaxXWorld() == hitBoxMur.getMinXWorld()
+                && hitBoxJoueur.getMaxYWorld() > hitBoxMur.getMinYWorld()
+                && hitBoxJoueur.getMinYWorld() < hitBoxMur.getMaxYWorld()) {
+            total++;
+            System.out.println("contact coté droit");
+            r = false;
+        }
+
+        if (hitBoxJoueur.getMinXWorld() == hitBoxMur.getMaxXWorld()
+                && hitBoxJoueur.getMaxYWorld() > hitBoxMur.getMinYWorld()
+                && hitBoxJoueur.getMinYWorld() < hitBoxMur.getMaxYWorld()) {
+            total++;
+            System.out.println("contact coté gauche");
+            l = false;
+        }
+
+        if (hitBoxJoueur.getMinYWorld() == hitBoxMur.getMaxYWorld()
+                && hitBoxJoueur.getMaxXWorld() > hitBoxMur.getMinXWorld()
+                && hitBoxJoueur.getMinXWorld() < hitBoxMur.getMaxXWorld()) {
+            total++;
+            System.out.println("contact coté haut");
+            u = false;
+        }
+
+        if (hitBoxJoueur.getMaxYWorld() == hitBoxMur.getMinYWorld()
+                && hitBoxJoueur.getMaxXWorld() > hitBoxMur.getMinXWorld()
+                && hitBoxJoueur.getMinXWorld() < hitBoxMur.getMaxXWorld()) {
+            total++;
+            System.out.println("contact coté bas");
+            d = false;
+        }
+        ;
+        //System.out.println("Total des contacts = " + total);
+
+        if (total == 1) {
+            if (!r) {
+                player.setProperty("canMoveRight", false);
+            } else if (!l) {
+                player.setProperty("canMoveLeft", false);
+            } else if (!u) {
+                player.setProperty("canMoveUp", false);
+            } else if (!d) {
+                player.setProperty("canMoveDown", false);
+            }
+        }
+    }
+
+    @Override
+    protected void onUpdate(double tpf) {
+
+        player.setProperty("canMoveRight", true);
+        player.setProperty("canMoveLeft", true);
+        player.setProperty("canMoveUp", true);
+        player.setProperty("canMoveDown", true);
+
+        for (Map.Entry<Entity, Mur> m : Labyrinthe.getMursHit().entrySet()) {
+            gererLesContacts(player, m.getKey(), player.getBoundingBoxComponent().hitBoxesProperty().get(0), m.getValue().getHitBox());
         }
     }
 }

@@ -4,18 +4,24 @@ import app.EntityType;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.almasb.fxgl.entity.Entity;
 
 public class Labyrinthe {
 
     private Integer sizeX;
     private Integer sizeY;
+    private static List<Entity> murs;
+    private static Map<Entity, Mur> mursHit;
 
     public Labyrinthe(Integer sizeX, Integer sizeY) {
         this.sizeX = sizeX;
@@ -23,7 +29,17 @@ public class Labyrinthe {
     }
 
     public static List<Entity> getMurs(String codes, GameWorld gameWorld){
-        List<Entity> murs = new ArrayList<>();
+        if (murs != null) {
+            return murs;
+        }
+        else {
+            return makeMurs(codes, gameWorld);
+        }
+    }
+
+    public static List<Entity> makeMurs(String codes, GameWorld gameWorld){
+        murs = new ArrayList<>();
+        mursHit = new HashMap<>();
         String[] lignes = codes.split("\n");
         int x = 10;
         int y = 50;
@@ -44,7 +60,9 @@ public class Labyrinthe {
                                 .viewFromNodeWithBBox(new Rectangle(x, y, Color.rgb(i * j * 23 % 255, i * j * 81 % 255,i * j * 186 % 255)))
                                 .with(new CollidableComponent(true), new PhysicsComponent())
                                 .buildAndAttach(gameWorld);
+
                         murs.add(mur);
+                        mursHit.put(mur, new Mur(mur));
                     }
                     posX += 50;
                 }
@@ -64,6 +82,7 @@ public class Labyrinthe {
                                 .with(new CollidableComponent(true), new PhysicsComponent())
                                 .buildAndAttach(gameWorld);
                         murs.add(mur);
+                        mursHit.put(mur, new Mur(mur));
                     }
                     posX += 50;
                 }
@@ -73,6 +92,14 @@ public class Labyrinthe {
 
         }
         return murs;
+    }
+
+    public static List<Entity> getMurs() {
+        return murs;
+    }
+
+    public static Map<Entity, Mur> getMursHit() {
+        return mursHit;
     }
 
     public Integer getSizeX() {
