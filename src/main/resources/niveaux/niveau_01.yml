@@ -1,10 +1,10 @@
 nom : "niveau_01"
 
 cibles :
-  "pomme1_.png" : 20.00
+  "pomme1_.png" : 10.00
 
-  "pomme2_.png" : 20.00
+  "pomme2_.png" : 50.00
 
-  "pomme3_.png" : 20.00
+  "pomme3_.png" : 30.00
 
-  "pomme4_.png" : 20.00
+  "pomme4_.png" : 40.00
