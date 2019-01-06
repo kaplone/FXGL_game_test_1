@@ -1,10 +1,45 @@
 nom : "niveau_01"
 
 cibles :
-  "pomme1_.png" : 10.00
+  - imagePath : "pomme1_.png"
+    tempsMax : 10.00
+    xPos : 70
+    yPos : 160
 
-  "pomme2_.png" : 50.00
+  - imagePath : "pomme2_.png"
+    tempsMax : 25.00
+    xPos : 520
+    yPos : 70
 
-  "pomme3_.png" : 30.00
+  - imagePath : "pomme3_.png"
+    tempsMax : 15.00
+    xPos : 70
+    yPos : 513
 
-  "pomme4_.png" : 40.00
+  - imagePath : "pomme4_.png"
+    tempsMax : 35.00
+    xPos : 460
+    yPos : 513
+    
+dessin :
+  - "__________"
+  - "  |  | |  |"
+  - "  __    _ " 
+  - "||  ||| | |" 
+  - " __   __  " 
+  - "||  | |  ||" 
+  - "_ ____ ___" 
+  - "| ||  | | |" 
+  - " _  _ _   " 
+  - "|  | | | ||" 
+  - "_ __ _  _ " 
+  - "| | || || |" 
+  - " _    _  _" 
+  - "|  | |  | |" 
+  - " ___ _ __ " 
+  - "|  |  ||  |" 
+  - "_ ___ _  _" 
+  - "| | | | | |" 
+  - " _   _ __ " 
+  - "|  |  |  ||" 
+  - "_________"

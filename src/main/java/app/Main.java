@@ -1,8 +1,8 @@
 package app;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -10,34 +10,29 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
-
-import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.time.Timer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import javafx.geometry.Pos;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import models.But;
 import models.Labyrinthe;
-
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import models.Niveau;
 
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import static app.EnumDirection.*;
+import static app.EnumDirection.NONE;
 
 public class Main extends GameApplication {
 
@@ -104,60 +99,26 @@ public class Main extends GameApplication {
 
         pommes = new ArrayList<>();
 
-        pomme = Entities.builder()
-                .type(EntityType.POMME)
-                .at(70, 160)
-                .viewFromTextureWithBBox("pomme1_.png")
-                .with(new CollidableComponent(true), new PhysicsComponent())
-                .buildAndAttach(getGameWorld());
-        pommes.add(pomme);
-        pomme = Entities.builder()
-                .type(EntityType.POMME)
-                .at(520, 70)
-                .viewFromTextureWithBBox("pomme2_.png")
-                .with(new CollidableComponent(true), new PhysicsComponent())
-                .buildAndAttach(getGameWorld());
-        pommes.add(pomme);
-        pomme = Entities.builder()
-                .type(EntityType.POMME)
-                .at(70, 513)
-                .viewFromTextureWithBBox("pomme3_.png")
-                .with(new CollidableComponent(true), new PhysicsComponent())
-                .buildAndAttach(getGameWorld());
-        pommes.add(pomme);
-        pomme = Entities.builder()
-                .type(EntityType.POMME)
-                .at(460, 513)
-                .viewFromTextureWithBBox("pomme4_.png")
-                .with(new CollidableComponent(true), new PhysicsComponent())
-                .buildAndAttach(getGameWorld());
-        pommes.add(pomme);
+        niveau = new Niveau();
 
-        String s =
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        try {
+            niveau = mapper.readValue(new File("src/main/resources/niveaux/niveau_01.yml"), Niveau.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-                "__________" + "\n"
-                        + "  |  | |  |" + "\n"
-                        + "  __    _ " + "\n"
-                        + "||  ||| | |" + "\n"
-                        + " __   __  " + "\n"
-                        + "||  | |  ||" + "\n"
-                        + "_ ____ ___" + "\n"
-                        + "| ||  | | |" + "\n"
-                        + " _  _ _   " + "\n"
-                        + "|  | | | ||" + "\n"
-                        + "_ __ _  _ " + "\n"
-                        + "| | || || |" + "\n"
-                        + " _    _  _" + "\n"
-                        + "|  | |  | |" + "\n"
-                        + " ___ _ __ " + "\n"
-                        + "|  |  ||  |" + "\n"
-                        + "_ ___ _  _" + "\n"
-                        + "| | | | | |" + "\n"
-                        + " _   _ __ " + "\n"
-                        + "|  |  |  ||" + "\n"
-                        + "_________" + "\n";
+        for (But but : niveau.getCibles()) {
+            pomme = Entities.builder()
+                    .type(EntityType.POMME)
+                    .at(but.getxPos(), but.getyPos())
+                    .viewFromTextureWithBBox(but.getImagePath())
+                    .with(new CollidableComponent(true), new PhysicsComponent())
+                    .buildAndAttach(getGameWorld());
+            pommes.add(pomme);
+        }
 
-        murs = Labyrinthe.getMurs(s, getGameWorld());
+        murs = Labyrinthe.getMurs(niveau.getDessin(), getGameWorld());
     }
 
     @Override
@@ -342,17 +303,6 @@ public class Main extends GameApplication {
     @Override
     protected void initUI() {
 
-        niveau = new Niveau();
-
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        try {
-            niveau = mapper.readValue(new File("src/main/resources/niveaux/niveau_01.yml"), Niveau.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(niveau.getNom());
-
         df = new DecimalFormat("00.00");
 
         chronos = new VBox();
@@ -365,9 +315,7 @@ public class Main extends GameApplication {
 
         chronosTexts = new Text[]{chrono1, chrono2, chrono3, chrono4};
 
-        keys = niveau.getCibles().keySet().toArray(new String[niveau.getCibles().size()]);
-
-        for (int i = 0; i < chronosTexts.length; i++) {
+        for (int i = 0; i < niveau.getCibles().size(); i++) {
             HBox hbox = new HBox();
             hbox.setAlignment(Pos.CENTER_LEFT);
             hbox.setSpacing(20);
@@ -375,8 +323,8 @@ public class Main extends GameApplication {
                     + "-fx-border-width: 1;" + "-fx-border-insets: 5;"
                     + "-fx-border-radius: 5;" + "-fx-border-color: black;");
             chronosTexts[i] = new Text();
-            chronosTexts[i].setText(df.format(niveau.getCibles().get(keys[i])));
-            ImageView imageView = new ImageView("assets/textures/" + keys[i]);
+            chronosTexts[i].setText(df.format(niveau.getCibles().get(i).getTempsMax()));
+            ImageView imageView = new ImageView("assets/textures/" + niveau.getCibles().get(i).getImagePath());
             hbox.getChildren().addAll(imageView, chronosTexts[i]);
             chronos.getChildren().addAll(hbox);
         }
@@ -450,8 +398,8 @@ public class Main extends GameApplication {
     protected void onUpdate(double tpf) {
 
 
-        if (isChronoStarted){
-            chrono1.setText(df.format((niveau.getCibles().get(keys[0]) + chronoStart / 3 - timer.getNow() / 3 )));
+        if (isChronoStarted) {
+            chrono1.setText(df.format((niveau.getCibles().get(0).getTempsMax() + chronoStart / 3 - timer.getNow() / 3)));
         }
 
 

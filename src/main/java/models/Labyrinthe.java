@@ -28,27 +28,26 @@ public class Labyrinthe {
         this.sizeY = sizeY;
     }
 
-    public static List<Entity> getMurs(String codes, GameWorld gameWorld){
+    public static List<Entity> getMurs(List<String> lignes, GameWorld gameWorld){
         if (murs != null) {
             return murs;
         }
         else {
-            return makeMurs(codes, gameWorld);
+            return makeMurs(lignes, gameWorld);
         }
     }
 
-    public static List<Entity> makeMurs(String codes, GameWorld gameWorld){
+    public static List<Entity> makeMurs(List<String> lignes, GameWorld gameWorld){
         murs = new ArrayList<>();
         mursHit = new HashMap<>();
-        String[] lignes = codes.split("\n");
         int x;
         int y;
         int posX = 50;
         int posY = 50;
         int deltaY;
-        for (int i = 0; i < lignes.length; i++){
+        for (int i = 0; i < lignes.size(); i++){
             //System.out.println(i + " : " + lignes[i]);
-            String[] elements = lignes[i].split("");
+            String[] elements = lignes.get(i).split("");
             if (i % 2 == 0){
                 x = 60;
                 y = 10;
