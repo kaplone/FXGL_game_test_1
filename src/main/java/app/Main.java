@@ -23,6 +23,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import models.But;
+import models.Item;
 import models.Labyrinthe;
 import models.Niveau;
 
@@ -65,6 +66,9 @@ public class Main extends GameApplication {
     private Double chronoStart;
     private Boolean isChronoStarted;
 
+    private Entity item;
+    private List<Entity> items;
+
     private Timer timer;
 
     @Override
@@ -98,6 +102,7 @@ public class Main extends GameApplication {
         player.setProperty("nextDirection", NONE);
 
         pommes = new ArrayList<>();
+        items = new ArrayList<>();
 
         niveau = new Niveau();
 
@@ -116,6 +121,16 @@ public class Main extends GameApplication {
                     .with(new CollidableComponent(true), new PhysicsComponent())
                     .buildAndAttach(getGameWorld());
             pommes.add(pomme);
+        }
+
+        for (Item item_ : niveau.getItems()) {
+            item = Entities.builder()
+                    .type(EntityType.CACTUS)
+                    .at(item_.getxPos(), item_.getyPos())
+                    .viewFromTextureWithBBox(item_.getImagePath())
+                    .with(new CollidableComponent(true), new PhysicsComponent())
+                    .buildAndAttach(getGameWorld());
+            items.add(item);
         }
 
         murs = Labyrinthe.getMurs(niveau.getDessin(), getGameWorld());
@@ -266,12 +281,21 @@ public class Main extends GameApplication {
                 //((Rectangle) player.getView().getNodes().get(0)).setFill(((Circle) pomme.getView().getNodes().get(0)).getFill());
             }
         });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.JOUEUR, EntityType.CACTUS) {
+
+            // order of types is the same as passed into the constructor
+            @Override
+            protected void onCollisionBegin(Entity joueur, Entity cactus) {
+                ((Rectangle) player.getView().getNodes().get(0)).setFill(Color.RED);
+            }
+        });
+
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.JOUEUR, EntityType.MUR) {
 
             // order of types is the same as passed into the constructor
             @Override
             protected void onCollisionBegin(Entity joueur, Entity mur) {
-                //System.out.println("Begin");
             }
 
 
@@ -340,6 +364,8 @@ public class Main extends GameApplication {
     }
 
     protected void gererLesContacts(Entity player, Entity mur, HitBox hitBoxJoueur, HitBox hitBoxMur) {
+
+        //System.out.println(hitBoxMur);
 
         int total = 0;
         Boolean r = true;
@@ -412,5 +438,8 @@ public class Main extends GameApplication {
                 .filter(k -> Math.abs(player.getX() - k.getKey().getX()) < 100
                         && Math.abs(player.getY() - k.getKey().getY()) < 100)
                 .forEach(m -> gererLesContacts(player, m.getKey(), player.getBoundingBoxComponent().hitBoxesProperty().get(0), m.getValue().getHitBox()));
+
+        items.stream()
+                .forEach(i -> gererLesContacts(player, i, player.getBoundingBoxComponent().hitBoxesProperty().get(0), i.getBoundingBoxComponent().hitBoxesProperty().get(0)));
     }
 }

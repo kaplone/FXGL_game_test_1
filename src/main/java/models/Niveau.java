@@ -8,8 +8,17 @@ import java.util.Map;
 public class Niveau {
 
     private List<But> cibles;
+    private List<Item> items;
     private String nom;
     private List<String> dessin;
+
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
 
     public List<String> getDessin() {
         return dessin;

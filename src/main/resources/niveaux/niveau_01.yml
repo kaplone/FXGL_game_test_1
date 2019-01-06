@@ -20,6 +20,15 @@ cibles :
     tempsMax : 35.00
     xPos : 460
     yPos : 513
+
+items :
+  - imagePath: "cle_2_.png"
+    xPos: 270
+    yPos: 513
+
+  - imagePath: "cactus.png"
+    xPos: 215
+    yPos: 313
     
 dessin :
   - "__________"
