@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static app.EntityType.*;
 import static app.EnumDirection.NONE;
 
 public class Main extends GameApplication {
@@ -88,7 +89,7 @@ public class Main extends GameApplication {
         vitesse = 1;
 
         player = Entities.builder()
-                .type(EntityType.JOUEUR)
+                .type(JOUEUR)
                 .at(20, 20)
                 .viewFromNodeWithBBox(new Rectangle(sizePlayerX, sizePlayerY, Color.BLUE))
                 .with(new CollidableComponent(true))
@@ -115,7 +116,7 @@ public class Main extends GameApplication {
 
         for (But but : niveau.getCibles()) {
             pomme = Entities.builder()
-                    .type(EntityType.POMME)
+                    .type(POMME)
                     .at(but.getxPos(), but.getyPos())
                     .viewFromTextureWithBBox(but.getImagePath())
                     .with(new CollidableComponent(true), new PhysicsComponent())
@@ -125,7 +126,7 @@ public class Main extends GameApplication {
 
         for (Item item_ : niveau.getItems()) {
             item = Entities.builder()
-                    .type(EntityType.CACTUS)
+                    .type(item_.getType())
                     .at(item_.getxPos(), item_.getyPos())
                     .viewFromTextureWithBBox(item_.getImagePath())
                     .with(new CollidableComponent(true), new PhysicsComponent())
@@ -271,7 +272,7 @@ public class Main extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.JOUEUR, EntityType.POMME) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(JOUEUR, POMME) {
 
             // order of types is the same as passed into the constructor
             @Override
@@ -282,7 +283,7 @@ public class Main extends GameApplication {
             }
         });
 
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.JOUEUR, EntityType.CACTUS) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(JOUEUR, CACTUS) {
 
             // order of types is the same as passed into the constructor
             @Override
@@ -291,7 +292,27 @@ public class Main extends GameApplication {
             }
         });
 
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.JOUEUR, EntityType.MUR) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(JOUEUR, CLE) {
+
+            // order of types is the same as passed into the constructor
+            @Override
+            protected void onCollisionBegin(Entity joueur, Entity cle) {
+                //((Rectangle) player.getView().getNodes().get(0)).setFill(Color.RED);
+                cle.removeFromWorld();
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(JOUEUR, HACHE) {
+
+            // order of types is the same as passed into the constructor
+            @Override
+            protected void onCollisionBegin(Entity joueur, Entity hache) {
+                //((Rectangle) player.getView().getNodes().get(0)).setFill(Color.GREY);
+                hache.removeFromWorld();
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(JOUEUR, MUR) {
 
             // order of types is the same as passed into the constructor
             @Override
@@ -440,6 +461,7 @@ public class Main extends GameApplication {
                 .forEach(m -> gererLesContacts(player, m.getKey(), player.getBoundingBoxComponent().hitBoxesProperty().get(0), m.getValue().getHitBox()));
 
         items.stream()
+                .filter(a -> CACTUS.equals(a.getType()))
                 .forEach(i -> gererLesContacts(player, i, player.getBoundingBoxComponent().hitBoxesProperty().get(0), i.getBoundingBoxComponent().hitBoxesProperty().get(0)));
     }
 }
