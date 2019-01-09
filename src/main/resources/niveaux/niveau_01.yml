@@ -22,13 +22,20 @@ cibles :
     yPos : 513
 
 items :
-  - imagePath: "cle_2_.png"
-    xPos: 270
+  - type : "CLE"
+    imagePath: "cle_2_.png"
+    xPos: 315
     yPos: 513
 
-  - imagePath: "cactus.png"
+  - type : "CACTUS"
+    imagePath: "cactus.png"
     xPos: 215
     yPos: 313
+
+  - type : "HACHE"
+    imagePath: "hache_1.png"
+    xPos: 365
+    yPos: 410
     
 dessin :
   - "__________"

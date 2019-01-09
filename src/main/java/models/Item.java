@@ -1,11 +1,25 @@
 package models;
 
+import app.EntityType;
+
 public class Item {
 
     private String imagePath;
     private Integer xPos;
     private Integer yPos;
+    private EntityType type;
 
+    public Boolean isStopped() {
+        return EntityType.CACTUS.equals(type);
+    }
+
+    public EntityType getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = EntityType.valueOf(type);
+    }
 
     public String getImagePath() {
         return imagePath;
