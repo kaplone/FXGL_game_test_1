@@ -26,6 +26,11 @@ items :
     yPos: 160
 
   - type: "POMME"
+    imagePath: "pomme1_.png"
+    xPos: 320
+    yPos: 460
+
+  - type: "POMME"
     imagePath: "pomme2_.png"
     xPos: 520
     yPos: 70

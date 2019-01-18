@@ -47,13 +47,13 @@ public class Main extends GameApplication {
     private GameSettings settings;
     private Integer sizeX = 800;
     private Integer sizeY = 600;
-    private Integer sizePlayerX = 25;
-    private Integer sizePlayerY = 25;
-    private Integer maxLeft;
-    private Integer maxRight;
-    private Integer maxTop;
-    private Integer maxBottom;
-    private Integer vitesse;
+    private Integer sizePlayerX = 30;
+    private Integer sizePlayerY = 30;
+    private Double maxLeft;
+    private Double maxRight;
+    private Double maxTop;
+    private Double maxBottom;
+    private Double vitesse;
     private Text chrono1;
     private Text chrono2;
     private Text chrono3;
@@ -88,7 +88,7 @@ public class Main extends GameApplication {
     @Override
     protected void initGame() {
 
-        vitesse = 1;
+        vitesse = 0.5d;
 
         player = Entities.builder()
                 .type(JOUEUR)
@@ -133,10 +133,10 @@ public class Main extends GameApplication {
     protected void initInput() {
         Input input = getInput();
 
-        maxRight = sizeX;
-        maxLeft = -sizePlayerX;
-        maxTop = -sizePlayerY;
-        maxBottom = sizeY;
+        maxRight = sizeX.doubleValue();
+        maxLeft = -sizePlayerX.doubleValue();
+        maxTop = -sizePlayerY.doubleValue();
+        maxBottom = sizeY.doubleValue();
 
         input.addAction(new UserAction("Clic") {
             @Override
@@ -162,9 +162,9 @@ public class Main extends GameApplication {
 
                 if (player.getProperties().getBoolean("canMoveRight")) {
                     // si l'objet sort par la droite il rentre par la gauche
-                    if (getGameState().getInt("pixelsMovedX") >= maxRight) {
-                        maxLeft = -sizePlayerX;
-                        maxRight = sizeX;
+                    if (getGameState().getDouble("pixelsMovedX") >= maxRight) {
+                        maxLeft = -sizePlayerX.doubleValue();
+                        maxRight = sizeX.doubleValue();
                         player.setPosition(maxLeft, player.getY());
                         getGameState().setValue("pixelsMovedX", maxLeft);
                     } else {
@@ -191,9 +191,9 @@ public class Main extends GameApplication {
                 if (player.getProperties().getBoolean("canMoveLeft")) {
                     // si l'objet sort par la gauche il rentre par a droite
                     //System.out.println(getGameState().getInt("pixelsMovedX") + " : " +  maxLeft);
-                    if (getGameState().getInt("pixelsMovedX") <= maxLeft) {
-                        maxLeft = -sizePlayerX;
-                        maxRight = sizeX;
+                    if (getGameState().getDouble("pixelsMovedX") <= maxLeft) {
+                        maxLeft = -sizePlayerX.doubleValue();
+                        maxRight = sizeX.doubleValue();
                         player.setPosition(maxRight, player.getY());
                         getGameState().setValue("pixelsMovedX", maxRight);
                     } else {
@@ -220,9 +220,9 @@ public class Main extends GameApplication {
                 if (player.getProperties().getBoolean("canMoveUp")) {
                     // si l'objet sort par le haut il rentre par le bas
                     // System.out.println(getGameState().getInt("pixelsMovedY") + " : " +  maxTop);
-                    if (getGameState().getInt("pixelsMovedY") <= maxTop) {
-                        maxTop = -sizePlayerY;
-                        maxBottom = sizeY;
+                    if (getGameState().getDouble("pixelsMovedY") <= maxTop) {
+                        maxTop = -sizePlayerY.doubleValue();
+                        maxBottom = sizeY.doubleValue();
                         player.setPosition(player.getX(), maxBottom);
                         getGameState().setValue("pixelsMovedY", maxBottom);
                     } else {
@@ -248,9 +248,9 @@ public class Main extends GameApplication {
 
                 if (player.getProperties().getBoolean("canMoveDown")) {
                     //System.out.println(getGameState().getInt("pixelsMovedY") + " : " +  maxBottom);
-                    if (getGameState().getInt("pixelsMovedY") >= maxBottom) {
-                        maxTop = -sizePlayerY;
-                        maxBottom = sizeY;
+                    if (getGameState().getDouble("pixelsMovedY") >= maxBottom) {
+                        maxTop = -sizePlayerY.doubleValue();
+                        maxBottom = sizeY.doubleValue();
                         player.setPosition(player.getX(), maxTop);
                         getGameState().setValue("pixelsMovedY", maxTop);
                     } else {
@@ -321,8 +321,8 @@ public class Main extends GameApplication {
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put("pixelsMovedX", 20);
-        vars.put("pixelsMovedY", 20);
+        vars.put("pixelsMovedX", 20d);
+        vars.put("pixelsMovedY", 20d);
 
         timer = getMasterTimer();
     }
@@ -441,8 +441,8 @@ public class Main extends GameApplication {
         player.setProperty("canMoveDown", true);
 
         Labyrinthe.getMursHit().entrySet().parallelStream()
-                .filter(k -> Math.abs(player.getX() - k.getKey().getX()) < 100
-                        && Math.abs(player.getY() - k.getKey().getY()) < 100)
+                .filter(k -> Math.abs(player.getX() - k.getKey().getX()) <= 60
+                        && Math.abs(player.getY() - k.getKey().getY()) <= 60)
                 .forEach(m -> gererLesContacts(player, m.getKey(), player.getBoundingBoxComponent().hitBoxesProperty().get(0), m.getValue().getHitBox()));
 
         items.stream()
