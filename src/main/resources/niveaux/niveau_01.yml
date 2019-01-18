@@ -1,27 +1,45 @@
 nom : "niveau_01"
 
+
 cibles :
   - imagePath : "pomme1_.png"
     tempsMax : 10.00
-    xPos : 70
-    yPos : 160
 
   - imagePath : "pomme2_.png"
     tempsMax : 25.00
-    xPos : 520
-    yPos : 70
 
   - imagePath : "pomme3_.png"
     tempsMax : 15.00
-    xPos : 70
-    yPos : 513
 
   - imagePath : "pomme4_.png"
     tempsMax : 35.00
-    xPos : 460
-    yPos : 513
 
 items :
+  - type: "POMME"
+    imagePath: "pomme1_.png"
+    xPos: 70
+    yPos: 160
+
+  - type: "POMME"
+    imagePath: "pomme1_.png"
+    xPos: 270
+    yPos: 160
+
+  - type: "POMME"
+    imagePath: "pomme2_.png"
+    xPos: 520
+    yPos: 70
+
+  - type: "POMME"
+    imagePath: "pomme3_.png"
+    xPos: 70
+    yPos: 513
+
+  - type: "POMME"
+    imagePath: "pomme4_.png"
+    xPos: 460
+    yPos: 513
+
   - type : "CLE"
     imagePath: "cle_2_.png"
     xPos: 315

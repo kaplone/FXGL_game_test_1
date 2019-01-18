@@ -32,6 +32,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static app.EntityType.*;
 import static app.EnumDirection.NONE;
@@ -112,16 +114,6 @@ public class Main extends GameApplication {
             niveau = mapper.readValue(new File("src/main/resources/niveaux/niveau_01.yml"), Niveau.class);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-        for (But but : niveau.getCibles()) {
-            pomme = Entities.builder()
-                    .type(POMME)
-                    .at(but.getxPos(), but.getyPos())
-                    .viewFromTextureWithBBox(but.getImagePath())
-                    .with(new CollidableComponent(true), new PhysicsComponent())
-                    .buildAndAttach(getGameWorld());
-            pommes.add(pomme);
         }
 
         for (Item item_ : niveau.getItems()) {
@@ -274,18 +266,14 @@ public class Main extends GameApplication {
     protected void initPhysics() {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(JOUEUR, POMME) {
 
-            // order of types is the same as passed into the constructor
             @Override
             protected void onCollisionBegin(Entity joueur, Entity pomme) {
-                //System.out.println(pomme);
                 pomme.removeFromWorld();
-                //((Rectangle) player.getView().getNodes().get(0)).setFill(((Circle) pomme.getView().getNodes().get(0)).getFill());
             }
         });
 
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(JOUEUR, CACTUS) {
-
-            // order of types is the same as passed into the constructor
+ 
             @Override
             protected void onCollisionBegin(Entity joueur, Entity cactus) {
                 ((Rectangle) player.getView().getNodes().get(0)).setFill(Color.RED);
@@ -294,27 +282,22 @@ public class Main extends GameApplication {
 
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(JOUEUR, CLE) {
 
-            // order of types is the same as passed into the constructor
             @Override
             protected void onCollisionBegin(Entity joueur, Entity cle) {
-                //((Rectangle) player.getView().getNodes().get(0)).setFill(Color.RED);
                 cle.removeFromWorld();
             }
         });
 
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(JOUEUR, HACHE) {
 
-            // order of types is the same as passed into the constructor
             @Override
             protected void onCollisionBegin(Entity joueur, Entity hache) {
-                //((Rectangle) player.getView().getNodes().get(0)).setFill(Color.GREY);
                 hache.removeFromWorld();
             }
         });
 
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(JOUEUR, MUR) {
 
-            // order of types is the same as passed into the constructor
             @Override
             protected void onCollisionBegin(Entity joueur, Entity mur) {
             }
@@ -342,7 +325,6 @@ public class Main extends GameApplication {
         vars.put("pixelsMovedY", 20);
 
         timer = getMasterTimer();
-
     }
 
     @Override
@@ -360,7 +342,10 @@ public class Main extends GameApplication {
 
         chronosTexts = new Text[]{chrono1, chrono2, chrono3, chrono4};
 
-        for (int i = 0; i < niveau.getCibles().size(); i++) {
+        Set<String> niveaux = niveau.getCibles().stream().map(a -> a.getImagePath()).collect(Collectors.toSet());
+        //dissocier les cibles et les niveaux
+
+        for (int i = 0; i < niveaux.size(); i++) {
             HBox hbox = new HBox();
             hbox.setAlignment(Pos.CENTER_LEFT);
             hbox.setSpacing(20);
